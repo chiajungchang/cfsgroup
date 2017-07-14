@@ -1,0 +1,65 @@
+require("shiny")
+require("reshape")
+require("ggplot2")
+require("plotly")
+
+#1. use require instead of library
+#2. four functions: name.tabPanel
+#                   name.siderbarPanel
+#                   name.prepareData
+#                   name.preparePlot
+#3. profile to pass parameters for specific data
+#4. function fileLocate to locate the date in selected folder
+#5. In prepareData, use <<- instead of <- or == to bring the reactive variable out
+#6. name each variables with prefix to aviod name conflict
+#7  global data frame sampleInfo as the sample profiles
+#8. touch server.R to enforce the update
+#9. use conditionalPanel in sidebarPanel
+#10. global data frame all_parameters to get folder specific parameters
+#11. reactive data is shareable
+#12. To use the module for one data, put "tools	toolname" in main.profile in the folder
+#13. To add parameter for a module for a folder, put "key	value" in toolname in the folder
+
+boxplot.tabPanel<-function(profile){
+	tabPanel("Box Plot", plotlyOutput("boxplot.plot"),verbatimTextOutput("boxplot.ttt"))
+}
+boxplot.sidebarPanel<-function(profile,input){
+	#title = profile$profile_value[profile$profile_key=="title"]
+	#subtitle = profile$profile_value[profile$profile_key=="subtitle"]
+	#conditionalPanel(condition = "input.tabs1 == 'Box Plot'",
+        #h4(paste(nrow(profile),"rows")),h5(title),h5(subtitle),
+				selectInput("boxplot.type","Box Plot: Select a test",levels(boxplot.data()$variable))
+#    			includeScript("tmp.js")   
+	#)
+}
+
+boxplot.prepareData<-function(input){
+	boxplot.data <<- reactive({ 
+		mdata<-read.table(fileLocate("matrix.tsv",input),header=T,sep="\t")
+		sampleInfo$id=rownames(sampleInfo)
+		mdata<-cbind(sampleInfo,mdata)
+ 		melt(mdata,id=colnames(sampleInfo))
+	})
+	boxplot.filteredData <<- reactive({
+		tmpdata=boxplot.data()
+		tmpdata[tmpdata$variable==input$boxplot.type,]
+	})
+}
+
+boxplot.preparePlot<-function(input,output){
+	output$boxplot.plot<- renderPlotly({
+	  p<-ggplot(boxplot.filteredData(),aes_string(x=input$group_by,y="value"))+
+	     geom_boxplot(aes_string(fill=input$group_by))+
+	     geom_jitter(aes(samid=id),width=0.1)
+		ggplotly(p,source="boxplot.plot")
+  }) 
+	output$boxplot.ttt<- renderPrint({
+		event.data <- event_data("plotly_click", source = "boxplot.plot")
+
+    # If NULL dont do anything
+    if(is.null(event.data) == T) return("nodata")
+	if(length(event.data$pointNumber)>1) return("too manydata")
+		boxplot.filteredData()[event.data$pointNumber+1,]
+  }) 
+
+}
