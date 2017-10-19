@@ -43,10 +43,10 @@ PCA.sidebarPanel<-function(profile,input,session){
 			data
 	})
   PCA.sampleData<-reactive({
-	sdata=Heatmap.mergeData()[,c(1:ncol(sampleInfo))]
+	sdata=share.mergeData()[,c(1:ncol(sampleInfo))]
   })
   PCA.pcadata <- reactive({
-			data=PCA.mergeData()[,-c(1:ncol(sampleInfo))]
+			data=share.mergeData()[,-c(1:ncol(sampleInfo))]
 			data=data[,which(apply(data, 2, var, na.rm=TRUE)!=0)] #remove constant
 			for(i in 1:ncol(data)){
 				data[is.na(data[,i]), i] <- mean(data[,i], na.rm = TRUE) #set NA as average
@@ -67,10 +67,13 @@ PCA.sidebarPanel<-function(profile,input,session){
 		else{
 			data<-PCA.pcadata()$x[,1:min(5,ncol(PCA.pcadata()$x))]
 			data<-cbind(PCA.sampleData(),data)
-			write.table(data[,-c(2:ncol(sampleInfo))],fileLocate("pca.tsv"),sep="\t",row.names=F)
+			rdata=data
+			rdata$SampleID=sampleRIDs[rdata$SampleID]
+			write.table(rdata[,-c(2:ncol(sampleInfo))],fileLocate("pca.tsv"),sep="\t",row.names=F)
 			data<-cbind(PCA.sampleData(),data[,c(input$pca_xc,input$pca_yc)])
 			
 		}
+		data$SampleID=sampleRIDs[data$SampleID]
 		data
 	})
 #}

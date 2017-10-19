@@ -1,6 +1,8 @@
-document.domain = "stanford.edu"; 
+document.domain = "stanford.edu";
+if(opener.location.host=="endmecfs.stanford.edu"){
 
-var userRoleVariableName = opener.userrole; 
-var userRole = document.getElementById("userRole"); 
-userRole.value = userRoleVariableName; 
+	var userrole= opener.userrole; 
+	var userRole = document.getElementById("userRole"); 
+	userRole.value = userrole; 
+}
 

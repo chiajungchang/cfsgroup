@@ -11,6 +11,7 @@ function(input, output,session) {
 	source("export.r",  local = TRUE)$value
 	source("sigBoxs.r",  local = TRUE)$value
 	source("Tests.r",  local = TRUE)$value
+	source("jquery.r",  local = TRUE)$value
     foldLocate <- reactive({
 		file.path(datafolder,input$mainfolder,input$subfolder)
 	})
@@ -26,22 +27,22 @@ function(input, output,session) {
 #	do.call("prepareData",list(input=input))
 
   output$folder<-  renderUI({
-#	 if(userRole()=="subscriber"){
+	 if(userRole()=="subscriber"){
 	  query <- parseQueryString(session$clientData$url_search)
 	  selectInput("mainfolder","Category",choices = levels(all_parameters$mainfolder),selected=query["folder"])
-#		}
-#	else{
-#		h5("unauthorized user")
-#	}
+		}
+	else{
+		h5("unauthorized user")
+	}
   })
   output$subfolder<-  renderUI({
-#	 if(userRole()=="subscriber"){
+	 if(userRole()=="subscriber"){
 	  query <- parseQueryString(session$clientData$url_search)
       selectInput("subfolder", "Subcategory", unique(all_parameters$subfolder[all_parameters$mainfold==input$mainfolder]),selected=query["subfolder"])
-#		}
-#	else{
-#		h5("unauthorized user")
-#	}
+		}
+	else{
+		h5("unauthorized user")
+	}
   })
   output$dynamicTabPanel=renderUI({
 	tools=all_parameters$profile_value[all_parameters$mainfolder==input$mainfolder & all_parameters$subfolder==input$subfolder     & all_parameters$profile==page & all_parameters$profile_key=="tools"]

@@ -41,10 +41,10 @@ Heatmap.sidebarPanel<-function(profile,input,session){
 			data
 	})
   Heatmap.sampleData<-reactive({
-	sdata=Heatmap.mergeData()[,c(1:ncol(sampleInfo))]
+	sdata=share.mergeData()[,c(1:ncol(sampleInfo))]
   })
   Heatmap.data <- reactive({ 
-			data=Heatmap.mergeData()[,-c(1:ncol(sampleInfo))]
+			data=share.mergeData()[,-c(1:ncol(sampleInfo))]
 			data=data[,which(apply(data, 2, var, na.rm=TRUE)!=0)] #remove constant
 			for(i in 1:ncol(data)){
 				data[is.na(data[,i]), i] <- mean(data[,i], na.rm = TRUE) #set NA as average

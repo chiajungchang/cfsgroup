@@ -12,3 +12,9 @@ for(profile_name in profiles){
 
 sampleInfo<-read.table(file.path(mainfolder,"sampleInfo.tsv"),sep="\t",header=T)
 
+randIDs<-read.table(file.path(mainfolder,"randomID.tsv"),sep="\t",header=T,stringsAsFactors=F)
+sampleRIDs=randIDs$rid
+names(sampleRIDs)=randIDs$SampleID
+
+sampleIDs=randIDs$SampleID
+names(sampleIDs)=randIDs$rid

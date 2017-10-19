@@ -4,8 +4,8 @@ source("global.r")
 fluidPage(
   # Application title
 	titlePanel("Visualization for the End ME/CFS Project"),
-#    HTML(' <input type="text" id="userRole" name="userRole" style="display: none;"> '),
-#    includeScript("get_user_id.js"),    
+    HTML(' <input type="text" id="userRole" name="userRole" style="display: none;"> '),
+    includeScript("get_user_id.js"),    
 	
   # Sidebar with a slider input for the number of bins
 	sidebarLayout(

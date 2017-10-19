@@ -50,10 +50,14 @@ boxplot.sidebarPanel<-function(profile,input,session){
 }
 
 #boxplot.prepareData<-function(input){
+  share.mergeData<-reactive({
+			data<-read.table(fileLocate("matrix.tsv"),header=T,sep="\t",check.names = F)
+			data<-merge(sampleInfo,data,by="SampleID")
+			data$SampleID=sampleRIDs[data$SampleID]
+			data
+	})
 	share.data <- reactive({ 
-		mdata<-read.table(fileLocate("matrix.tsv"),header=T,sep="\t",check.names = F)
-		mdata<-merge(sampleInfo,mdata,by="SampleID")      
- 		melt(mdata,id=colnames(sampleInfo))
+ 		melt(share.mergeData(),id=colnames(sampleInfo))
 	})
 	share.filteredData <- reactive({
 		tmpdata=share.data()
@@ -99,9 +103,9 @@ boxplot.sidebarPanel<-function(profile,input,session){
 	
     	if(is.null(event.data) == T) return("")
 		if(length(event.data$pointNumber)>1) return("")
-		paste("http://igenomed4.stanford.edu/shiny/shinyapp/individual/?sample=",share.filteredData()[event.data$pointNumber+1,3],sep="")
+		paste("http://endmecfs.stanford.edu/cfsindividual/?sample=",share.filteredData()[event.data$pointNumber+1,1],sep="")
 	}) 
 	output$boxplot.frame <- renderUI({
-    	tags$iframe(src=boxplot.loadframe(), height=600,width="100%")
+		a("More Info", class="web", href=boxplot.loadframe(), target="_blank")
    })
 #}
